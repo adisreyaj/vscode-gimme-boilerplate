@@ -31,10 +31,15 @@ export const createNodeExpressProjectDisposable = vscode.commands.registerComman
         });
         await packageHelper.createThePackageJSONFile();
         progress.report({
-          increment: 90,
+          increment: 70,
           message: 'Created the folder structure',
         });
         await fsHelper.createFoldersForNodeExpress();
+        progress.report({
+          increment: 90,
+          message: 'Created the Files',
+        });
+        await fsHelper.createFiles();
         progress.report({
           increment: 100,
           message: 'Done',

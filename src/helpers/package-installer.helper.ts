@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+const { spawn } = require('child_process');
 
 import { HttpService } from '../services/http.service';
 export class DepInstallHelpers {
@@ -54,6 +55,6 @@ export class DepInstallHelpers {
     terminal: vscode.Terminal,
     command: string,
   ) {
-    terminal.sendText(command);
+    const childProces = spawn(command);
   }
 }

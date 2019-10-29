@@ -1,23 +1,18 @@
 import fetch, { Response } from 'node-fetch';
 
 export class HttpService {
+  private nodeExpressConfigURL =
+    'https://raw.githubusercontent.com/adisreyaj/gimme-boilerplate-config/master/node-express-config.json';
   public async getPackagesForNodeExpress(): Promise<Response> {
-    return fetch('https://api.myjson.com/bins/152nvw').then((res) =>
-      res.json(),
-    );
-  }
-  public async getTSConfigForNodeExpress(): Promise<Response> {
-    return fetch(
-      'https://raw.githubusercontent.com/adisreyaj/dockerfiles/master/Node/Dockerfile',
-    ).then((res) => res.json());
+    return fetch(this.nodeExpressConfigURL).then((res) => res.json());
   }
 
-  public getPackageJSON(type: 'node' | 'npm') {
+  public async getPackageJSON(type: 'node' | 'npm') {
     switch (type) {
       case 'node':
-        return fetch('https://api.myjson.com/bins/16vuc4').then((res) =>
-          res.json(),
-        );
+        return fetch(this.nodeExpressConfigURL)
+          .then((res) => res.json())
+          .then((res) => res.package);
       case 'npm':
         return fetch('https://api.myjson.com/bins/16vuc4').then((res) =>
           res.json(),
@@ -25,11 +20,19 @@ export class HttpService {
     }
   }
 
-  public getDirectories() {
-    return fetch('https://api.myjson.com/bins/xu1xw').then((res) => res.json());
+  public async getDirectories() {
+    return fetch(this.nodeExpressConfigURL)
+      .then((res) => res.json())
+      .then((res) => res.directories);
   }
 
-  public getFiles() {
-    return fetch('https://api.myjson.com/bins/qyhwk').then((res) => res.json());
+  public async getFiles() {
+    return fetch(this.nodeExpressConfigURL)
+      .then((res) => res.json())
+      .then((res) => res.files);
+  }
+
+  public async getFileContentsFromURL(url: string) {
+    return fetch(url).then((res) => res.text());
   }
 }

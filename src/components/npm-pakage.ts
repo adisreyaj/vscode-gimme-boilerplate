@@ -7,8 +7,13 @@
  */
 
 import * as vscode from 'vscode';
+import { Helpers } from '../helpers';
 
 export const createNPMPackageProjectDisposable = vscode.commands.registerCommand(
   'extension.creatNPMPackageProject',
-  () => {},
+  () => {
+    const helper = new Helpers();
+    const depHelper = helper.getDependencyHelper();
+    depHelper.installDependencies();
+  },
 );
