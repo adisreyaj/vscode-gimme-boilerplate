@@ -1,0 +1,47 @@
+{
+  "name": "gimme-boilerplate",
+  "displayName": "gimme-boilerplate",
+  "description": "Gimme Boilerplate is a code boilerplate generator for Node and Angular applications which tries to include some of the best practices for bootstrapping a project.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.39.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:extension.creatNodeExpressProject",
+    "onCommand:extension.creatNPMPackageProject"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.creatNodeExpressProject",
+        "title": "Create Node Express Project"
+      },
+      {
+        "command": "extension.creatNPMPackageProject",
+        "title": "Create NPM Package Project"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -w",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.42",
+    "@types/node": "^10.12.21",
+    "@types/node-fetch": "^2.5.2",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.1",
+    "vscode": "^1.1.28"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.0"
+  }
+}
