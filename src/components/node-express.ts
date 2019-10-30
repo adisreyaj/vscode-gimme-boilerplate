@@ -11,38 +11,65 @@ import { Helpers } from '../helpers';
 
 export const createNodeExpressProjectDisposable = vscode.commands.registerCommand(
   'extension.creatNodeExpressProject',
-  async () => {
+  () => {
     vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Notification,
         title: 'Gimme Boilerplate',
         cancellable: false,
       },
-      async (progress, token) => {
+      (progress, token) => {
+        const promises: Promise<any>[] = [];
         progress.report({ increment: 0 });
         const helper = new Helpers();
         progress.report({ increment: 10 });
         const fsHelper = helper.getFSHelper();
         const packageHelper = helper.getPackageJsonHelper();
+        const depsHelper = helper.getDependencyHelper();
         progress.report({ increment: 20 });
         progress.report({
-          increment: 50,
+          increment: 30,
           message: 'Created package.json file',
         });
-        await packageHelper.createThePackageJSONFile();
-        progress.report({
-          increment: 70,
-          message: 'Created the folder structure',
-        });
-        await fsHelper.createFoldersForNodeExpress();
-        progress.report({
-          increment: 90,
-          message: 'Created the Files',
-        });
-        await fsHelper.createFiles();
-        progress.report({
-          increment: 100,
-          message: 'Done',
+        promises.push(
+          packageHelper.createThePackageJSONFile().then(() => {
+            progress.report({
+              increment: 50,
+              message: 'Created the folder structure',
+            });
+          }),
+        );
+        promises.push(
+          fsHelper.createFoldersForNodeExpress().then(() => {
+            progress.report({
+              increment: 60,
+              message: 'Created the Folders',
+            });
+          }),
+        );
+        promises.push(
+          fsHelper.createFiles().then(() => {
+            progress.report({
+              increment: 90,
+              message: 'Created the Files',
+            });
+          }),
+        );
+        promises.push(
+          depsHelper.installDependencies().then((terminal: vscode.Terminal) => {
+            terminal.show();
+            vscode.window.showInformationMessage(
+              "Dependencies are being installed....Please Don't Interrupt",
+              ...['Retry'],
+            );
+          }),
+        );
+        return new Promise((resolve, reject) => {
+          Promise.all(promises)
+            .then(() => {
+              resolve();
+            })
+            .catch(() => reject());
         });
       },
     );

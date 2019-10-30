@@ -32,7 +32,7 @@ export class HttpService {
       .then((res) => res.files);
   }
 
-  public async getFileContentsFromURL(url: string) {
+  public async getFileContentsFromURL(url: string): Promise<string> {
     return fetch(url).then((res) => res.text());
   }
 }

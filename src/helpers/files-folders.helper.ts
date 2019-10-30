@@ -37,7 +37,6 @@ export class FilesFoldersHelper {
           files.forEach(async (file: { name: string; link: string }) => {
             const path = `${this.cwd}/${file.name}`;
             const content = await this.http.getFileContentsFromURL(file.link);
-            console.log(content);
             fs.writeFileSync(path, content);
           });
           resolve('Directories Created');

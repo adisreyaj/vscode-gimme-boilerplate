@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-const { spawn } = require('child_process');
+import * as child_process from 'child_process';
 
 import { HttpService } from '../services/http.service';
 export class DepInstallHelpers {
@@ -7,38 +7,40 @@ export class DepInstallHelpers {
   constructor() {
     this.http = new HttpService();
   }
-  public async installDependencies() {
-    this.http.getPackagesForNodeExpress().then((response: any) => {
-      const dependencies = this.getPackages(response.dependencies);
-      const devDependencies = this.getPackages(response.devDependencies);
-      const depInstallCommand = this.getNPMInstallCommand(dependencies);
-      const devDepInstallCommand = this.getNPMInstallCommand(
-        devDependencies,
-        true,
-      );
-      const cwd = vscode.workspace.workspaceFolders
-        ? vscode.workspace.workspaceFolders[0].uri.fsPath
-        : undefined;
-      const terminalforDep = vscode.window.createTerminal({
-        hideFromUser: false,
-        name: 'Installing Deps',
-        cwd,
-      });
-      const terminalForDevDep = vscode.window.createTerminal({
-        hideFromUser: false,
-        name: 'Installing Dev Deps',
-        cwd,
-      });
-      this.sendInstallCommandToTerminal(terminalforDep, `${depInstallCommand}`);
-      this.sendInstallCommandToTerminal(
-        terminalForDevDep,
-        `${devDepInstallCommand}`,
-      );
-    });
-  }
+  public async installDependencies(): Promise<vscode.Terminal> {
+    return new Promise((resolve, reject) => {
+      try {
+        this.http
+          .getPackagesForNodeExpress()
+          .then((response: any) => {
+            const dependencies = response.dependencies;
+            const devDependencies = response.devDependencies;
+            const depInstallCommand = this.getNPMInstallCommand(dependencies);
+            const devDepInstallCommand = this.getNPMInstallCommand(
+              devDependencies,
+              true,
+            );
+            const cwd = vscode.workspace.workspaceFolders
+              ? vscode.workspace.workspaceFolders[0].uri.fsPath
+              : undefined;
 
-  public getPackages(dependencies: any): string[] {
-    return Object.keys(dependencies);
+            const terminal = vscode.window.createTerminal({
+              name: 'Install Deps',
+              cwd,
+              hideFromUser: false,
+            });
+            this.sendInstallCommandToTerminal(terminal, depInstallCommand);
+            this.sendInstallCommandToTerminal(terminal, devDepInstallCommand);
+            terminal.sendText('exit', true);
+            resolve(terminal);
+          })
+          .catch((err) => {
+            throw Error(err);
+          });
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
   public getNPMInstallCommand(
@@ -55,6 +57,7 @@ export class DepInstallHelpers {
     terminal: vscode.Terminal,
     command: string,
   ) {
-    const childProces = spawn(command);
+    terminal.sendText(command, true);
+    // terminal.dispose();
   }
 }

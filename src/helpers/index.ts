@@ -13,4 +13,7 @@ export class Helpers {
   public getFSHelper() {
     return new FilesFoldersHelper();
   }
+  public installDepsHelper() {
+    return new DepInstallHelpers();
+  }
 }
