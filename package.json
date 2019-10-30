@@ -1,8 +1,8 @@
 {
   "name": "gimme-boilerplate",
-  "displayName": "gimme-boilerplate",
+  "displayName": "Gimme Boilerplate: The Boilerplate Generator",
   "description": "Gimme Boilerplate is a code boilerplate generator for Node and Angular applications which tries to include some of the best practices for bootstrapping a project.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.39.0"
   },
