@@ -10,10 +10,10 @@ export class FilesFoldersHelper {
       ? vscode.workspace.workspaceFolders[0].uri.fsPath
       : undefined;
   }
-  public async createFoldersForNodeExpress(): Promise<String> {
+  public async createFolders(type: 'node' | 'npm'): Promise<String> {
     return new Promise((resolve, reject) => {
       try {
-        this.http.getDirectories().then((result: string[]) => {
+        this.http.getDirectories(type).then((result: string[]) => {
           const directories = result;
           directories.forEach((directory) => {
             const path = `${this.cwd}/${directory}`;
@@ -29,10 +29,10 @@ export class FilesFoldersHelper {
     });
   }
 
-  public async createFiles(): Promise<string> {
+  public async createFiles(type: 'node' | 'npm'): Promise<string> {
     return new Promise((resolve, reject) => {
       try {
-        this.http.getFiles().then((result) => {
+        this.http.getFiles(type).then((result) => {
           const files = result;
           files.forEach(async (file: { name: string; link: string }) => {
             const path = `${this.cwd}/${file.name}`;

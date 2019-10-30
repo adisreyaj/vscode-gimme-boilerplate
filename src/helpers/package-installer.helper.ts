@@ -7,19 +7,16 @@ export class DepInstallHelpers {
   constructor() {
     this.http = new HttpService();
   }
-  public async installDependencies(): Promise<vscode.Terminal> {
+  public async installDependencies(
+    type: 'node' | 'npm',
+  ): Promise<vscode.Terminal> {
     return new Promise((resolve, reject) => {
       try {
         this.http
-          .getPackagesForNodeExpress()
+          .getPackages(type)
           .then((response: any) => {
             const dependencies = response.dependencies;
             const devDependencies = response.devDependencies;
-            const depInstallCommand = this.getNPMInstallCommand(dependencies);
-            const devDepInstallCommand = this.getNPMInstallCommand(
-              devDependencies,
-              true,
-            );
             const cwd = vscode.workspace.workspaceFolders
               ? vscode.workspace.workspaceFolders[0].uri.fsPath
               : undefined;
@@ -29,8 +26,17 @@ export class DepInstallHelpers {
               cwd,
               hideFromUser: false,
             });
-            this.sendInstallCommandToTerminal(terminal, depInstallCommand);
-            this.sendInstallCommandToTerminal(terminal, devDepInstallCommand);
+            if (dependencies && dependencies.length !== 0) {
+              const depInstallCommand = this.getNPMInstallCommand(dependencies);
+              this.sendInstallCommandToTerminal(terminal, depInstallCommand);
+            }
+            if (devDependencies && devDependencies.length !== 0) {
+              const devDepInstallCommand = this.getNPMInstallCommand(
+                devDependencies,
+                true,
+              );
+              this.sendInstallCommandToTerminal(terminal, devDepInstallCommand);
+            }
             terminal.sendText('exit', true);
             resolve(terminal);
           })

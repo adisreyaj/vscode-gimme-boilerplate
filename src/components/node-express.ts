@@ -40,7 +40,7 @@ export const createNodeExpressProjectDisposable = vscode.commands.registerComman
           }),
         );
         promises.push(
-          fsHelper.createFoldersForNodeExpress().then(() => {
+          fsHelper.createFolders('node').then(() => {
             progress.report({
               increment: 60,
               message: 'Created the Folders',
@@ -48,7 +48,7 @@ export const createNodeExpressProjectDisposable = vscode.commands.registerComman
           }),
         );
         promises.push(
-          fsHelper.createFiles().then(() => {
+          fsHelper.createFiles('node').then(() => {
             progress.report({
               increment: 90,
               message: 'Created the Files',
@@ -56,13 +56,14 @@ export const createNodeExpressProjectDisposable = vscode.commands.registerComman
           }),
         );
         promises.push(
-          depsHelper.installDependencies().then((terminal: vscode.Terminal) => {
-            terminal.show();
-            vscode.window.showInformationMessage(
-              "Dependencies are being installed....Please Don't Interrupt",
-              ...['Retry'],
-            );
-          }),
+          depsHelper
+            .installDependencies('node')
+            .then((terminal: vscode.Terminal) => {
+              terminal.show();
+              vscode.window.showInformationMessage(
+                "Dependencies are being installed....Please Don't Interrupt",
+              );
+            }),
         );
         return new Promise((resolve, reject) => {
           Promise.all(promises)

@@ -12,8 +12,67 @@ import { Helpers } from '../helpers';
 export const createNPMPackageProjectDisposable = vscode.commands.registerCommand(
   'extension.creatNPMPackageProject',
   () => {
-    const helper = new Helpers();
-    const depHelper = helper.getDependencyHelper();
-    depHelper.installDependencies();
+    vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: 'Gimme Boilerplate',
+        cancellable: false,
+      },
+      (progress, token) => {
+        const promises: Promise<any>[] = [];
+        progress.report({ increment: 0 });
+        const helper = new Helpers();
+        progress.report({ increment: 10 });
+        const fsHelper = helper.getFSHelper();
+        const packageHelper = helper.getPackageJsonHelper();
+        const depsHelper = helper.getDependencyHelper();
+        progress.report({ increment: 20 });
+        progress.report({
+          increment: 30,
+          message: 'Created package.json file',
+        });
+        promises.push(
+          packageHelper.createThePackageJSONFile().then(() => {
+            progress.report({
+              increment: 50,
+              message: 'Created the folder structure',
+            });
+          }),
+        );
+        promises.push(
+          fsHelper.createFolders('npm').then(() => {
+            progress.report({
+              increment: 60,
+              message: 'Created the Folders',
+            });
+          }),
+        );
+        promises.push(
+          fsHelper.createFiles('npm').then(() => {
+            progress.report({
+              increment: 90,
+              message: 'Created the Files',
+            });
+          }),
+        );
+        promises.push(
+          depsHelper
+            .installDependencies('npm')
+            .then((terminal: vscode.Terminal) => {
+              terminal.show();
+              vscode.window.showInformationMessage(
+                "Dependencies are being installed....Please Don't Interrupt",
+              );
+            }),
+        );
+        return new Promise((resolve, reject) => {
+          Promise.all(promises)
+            .then(() => {
+              resolve();
+            })
+            .catch(() => reject());
+        });
+      },
+    );
   },
 );
